@@ -8,7 +8,7 @@ namespace rocket{
 
 class Config{
 public:
-    Config(const char* xmfile);
+    Config(const char* xmfile); //给的是xml文件的路径
 
 public:
     static Config* GetGlobalConfiger();
