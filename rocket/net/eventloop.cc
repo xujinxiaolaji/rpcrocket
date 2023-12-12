@@ -61,6 +61,7 @@ namespace rocket{
         }
 
         initWakeUpFdEvent();
+        initTimer();
  
         INFOLOG("successfully create eventloop in thread %d",m_thread_id);
 
@@ -73,6 +74,19 @@ namespace rocket{
             delete m_wake_fd_event;
             m_wake_fd_event = NULL;
         }
+        if(m_timer){
+            delete m_timer;
+            m_timer = NULL;
+        }
+    }
+
+    void EventLoop::initTimer() {
+        m_timer = new Timer();
+        addEpollEvent(m_timer);
+    }
+
+    void EventLoop::addTimerEvent(TimerEvent::s_ptr event) {
+        m_timer->addTimerEvent(event);
     }
 
     void EventLoop::initWakeUpFdEvent(){
@@ -126,6 +140,11 @@ namespace rocket{
                     cb();
                 }
             }
+
+            //如果有定时任务需要执行，那么在这里执行就好了
+            // 1.怎么判断一个定时任务需要执行? (now() > TimerEvent.arrive_time)
+            // 2. arrive_time如何让eventloop监听
+
             //接着就是epoll
             int timeout = g_epoll_max_timeout;
             epoll_event result_events[g_epoll_max_events];
