@@ -39,4 +39,22 @@ TcpAcceptot::~TcpAcceptot() {
     
 }
 
+int TcpAcceptot::accept() {
+    if (m_family == AF_INET) {
+        sockaddr_in client_addr;
+        memset(&client_addr,0,sizeof(client_addr));
+        socklen_t clien_addr_len = sizeof(client_addr);
+
+        int client_fd = ::accept(m_listenfd,reinterpret_cast<sockaddr*>(&client_addr),&clien_addr_len);
+        if(client_fd < 0) {
+            ERRORLOG("accept error,errno=%d,error=%s",errno,strerror(errno));
+        }
+        IPNetAddr peer_addr(client_addr);
+        INFOLOG("A client have accepted success,peer addr [%s]",peer_addr.toString());
+        return client_fd;
+    } else {
+        //...
+    }
+}
+
 }

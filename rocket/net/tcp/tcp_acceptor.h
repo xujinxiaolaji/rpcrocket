@@ -10,6 +10,7 @@ public:
     TcpAcceptot(NetAddr::s_ptr local_addr) ;
     ~TcpAcceptot();
 
+    int accept();
     
 private:
     NetAddr::s_ptr m_local_addr;  //服务端监听的地址：addr->ip:port
