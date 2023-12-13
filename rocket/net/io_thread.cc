@@ -9,6 +9,8 @@ namespace rocket{
 IOThread::IOThread() {
     int rt = sem_init(&m_init_semaphore,0,0);
     assert(rt==0);
+    rt = sem_init(&m_start_semaphore,0,0);
+    assert(rt == 0);
 
     pthread_create(&m_thread,NULL,&IOThread::Main,this); //传this对象的话，可以在Main中把这个对象取出来,因为最后一个参数是Main函数的输入参数
 
@@ -20,6 +22,7 @@ IOThread::IOThread() {
 IOThread::~IOThread() {
     m_eventloop->stop();
     sem_destroy(&m_init_semaphore);
+    sem_destroy(&m_start_semaphore);
     pthread_join(m_thread,NULL);
 
     if (m_eventloop) {
@@ -36,6 +39,9 @@ void* IOThread::Main(void* arg){ //进入main函数就相当于进入的新的�
     //唤醒等待的线程
     DEBUGLOG("IOThread %d created, wait start semaphore", thread->m_thread_id);
     sem_post(&thread->m_init_semaphore);
+    //阻塞在这里
+    DEBUGLOG("IOThread %d create,wait start semaphore",thread->m_thread_id);
+    sem_wait(&thread->m_start_semaphore);
     DEBUGLOG("IOThread %d start loop ",thread->m_thread_id);
     thread->m_eventloop->loop();
 

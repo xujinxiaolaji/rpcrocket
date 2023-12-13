@@ -28,8 +28,8 @@ private:
     pthread_t m_thread{0};//线程句柄(线程文件描述符)
     EventLoop* m_eventloop{NULL}; //当前io 线程的loop对象
 
-    sem_t m_init_semaphore;
-    sem_t m_start_semaphore;
+    sem_t m_init_semaphore; //初始化信号量
+    sem_t m_start_semaphore;// 启动信号量
 };
 
 

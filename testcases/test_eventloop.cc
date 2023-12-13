@@ -12,6 +12,7 @@
 #include "/home/xxxj/rpc/rocket/rocket/net/timer.h"
 #include "/home/xxxj/rpc/rocket/rocket/net/timer_event.h"
 #include "/home/xxxj/rpc/rocket/rocket/net/io_thread.h"
+#include "/home/xxxj/rpc/rocket/rocket/net/io_thread_group.h"
 
 void test_io_thread(){
     int listenfd = socket(AF_INET,SOCK_STREAM,0);
@@ -55,13 +56,21 @@ void test_io_thread(){
         }
     );
 
-    rocket::IOThread io_thread;
-    io_thread.getEventLoop()->addEpollEvent(&event);
-    io_thread.getEventLoop()->addTimerEvent(timer_event);
-    io_thread.start();
+    // rocket::IOThread io_thread;
+    
+    rocket::IOThreadGroup io_thread_group(2);
+    rocket::IOThread* io_thread = io_thread_group.getIOThread();
+    io_thread->getEventLoop()->addEpollEvent(&event);
+    io_thread->getEventLoop()->addTimerEvent(timer_event);
+    // io_thread->start();
 
-    io_thread.join();
+    rocket::IOThread* io_thread2 = io_thread_group.getIOThread();
+    // io_thread2->getEventLoop()->addEpollEvent(&event);
+    io_thread2->getEventLoop()->addTimerEvent(timer_event);
 
+    io_thread_group.start();
+    // io_thread->join();
+    io_thread_group.join();
 }
 
 int main(){
