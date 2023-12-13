@@ -31,6 +31,8 @@ namespace rocket{
         
         void addTimerEvent(TimerEvent::s_ptr event);
 
+    public:
+        static EventLoop* GetCurrentEventLoop();
     private:
         //处理wakeup的函数
         void dealWakeup();

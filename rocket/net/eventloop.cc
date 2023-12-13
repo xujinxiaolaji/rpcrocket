@@ -40,7 +40,7 @@ namespace rocket{
     static int g_epoll_max_events = 10;
 
     EventLoop::EventLoop(){
-        //创建eventloop之前需要先判断一下当前线 程是否已经创建了eventloop，如果创建了-->报错
+        //创建eventloop之前需要先判断一下当前线程是否已经创建了eventloop，如果创建了-->报错
         if(t_current_eventloop!=NULL){
             ERRORLOG("fail to create eventloop, this thread has created even loop");  //up这里写的是Error
             exit(0); //退出程序，exit(0)定义干净出口，没有任何错误； exit(1)定义程序中存在错误，并且程序终止。
@@ -243,6 +243,14 @@ namespace rocket{
         if(is_wake_up){
             wakeup();
         }
+    }
+
+    EventLoop* EventLoop::GetCurrentEventLoop() {
+        if(t_current_eventloop) {
+            return t_current_eventloop;
+        }
+        t_current_eventloop = new EventLoop();
+        return t_current_eventloop;
     }
 
 };

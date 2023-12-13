@@ -8,7 +8,7 @@
 
 namespace rocket {
 TcpAcceptot::TcpAcceptot(NetAddr::s_ptr local_addr): m_local_addr(local_addr){
-    if(!!local_addr->checkValid()) {
+    if(!local_addr->checkValid()) {
         ERRORLOG("invalid local addr %s",local_addr->toString().c_str());
         exit(0);
     }
@@ -50,11 +50,16 @@ int TcpAcceptot::accept() {
             ERRORLOG("accept error,errno=%d,error=%s",errno,strerror(errno));
         }
         IPNetAddr peer_addr(client_addr);
-        INFOLOG("A client have accepted success,peer addr [%s]",peer_addr.toString());
+        INFOLOG("A client have accepted success,peer addr [%s]",peer_addr.toString().c_str());
         return client_fd;
     } else {
-        //...
+        //...实现其他协议
+        return -1;
     }
+}
+
+int TcpAcceptot::getListenFd() {
+    return m_listenfd;
 }
 
 }
